@@ -5,8 +5,8 @@
 
 ## Key Features
 - **AI-Powered Motivation:** Tailored prompts and feedback to keep you inspired.
-- **Effortless Habit Management:** Simple tools to track your progress and achievements.
-- **Seamless Integration:** Built with a robust Python (Flask/FastAPI) backend and a modern React frontend.
+- **Effortless Habit Management:** Simple understandable tools to track your progress and achievements.
+- **Seamless Integration:** A robust Python (Flask/FastAPI) backend and a modern React frontend.
 - **Scalable & Secure:** Deployed on AWS for reliable and secure user experiences.
 
 Let's start building habits that stick with NeuroHabits! 🚀
