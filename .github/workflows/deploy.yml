@@ -32,8 +32,8 @@ jobs:
         AWS_REGION: ${{ secrets.AWS_REGION }}
         DYNAMODB_TABLE_NAME: ${{ secrets.DYNAMODB_TABLE_NAME }}
       run: |
-        cd backend
-        python -m pytest
+        cd ..
+        python -m pytest tests/
         
     - name: Deploy to production
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'

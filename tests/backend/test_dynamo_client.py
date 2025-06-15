@@ -97,8 +97,8 @@ def test_batch_write_items(dynamo_client):
     for item in items:
         assert any(scanned['id'] == item['id'] for scanned in scanned_items)
 
-def test_query_items(dynamo_client):
-    """Test querying items"""
+def test_scan_with_filter(dynamo_client):
+    """Test scanning items with a filter expression"""
     # Put items with different attributes
     items = [
         {'id': 'test1', 'type': 'A', 'data': 'data1'},
@@ -108,11 +108,11 @@ def test_query_items(dynamo_client):
     for item in items:
         dynamo_client.put_item('TestTable1', item)
     
-    # Query items with type 'A'
-    queried_items = dynamo_client.query(
+    # Scan items with type 'A' using filter expression
+    filtered_items = dynamo_client.scan(
         'TestTable1',
-        'type = :type',
-        {':type': 'A'}
+        filter_expression='type = :type',
+        expression_attribute_values={':type': 'A'}
     )
-    assert len(queried_items) == 2
-    assert all(item['type'] == 'A' for item in queried_items) 
+    assert len(filtered_items) == 2
+    assert all(item['type'] == 'A' for item in filtered_items) 
