@@ -8,7 +8,8 @@ from .db import db_client
 load_dotenv()
 
 # Initialize Flask app
-app = Flask(__name__, static_folder='../../frontend/build')
+static_folder_path = os.getenv('STATIC_FOLDER', os.path.abspath(os.path.join(os.path.dirname(__file__), '../../frontend/build')))
+app = Flask(__name__, static_folder=static_folder_path)
 CORS(app)
 
 # Example API Route to Add Data to DynamoDB
