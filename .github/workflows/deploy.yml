@@ -35,7 +35,7 @@ jobs:
     #     DYNAMODB_TABLE_NAME: ${{ secrets.DYNAMODB_TABLE_NAME }}
     #   run: |
     #     cd ..
-    #     python -m pytest tests/
+    #     python -m pytest ${{ github.workspace }}/tests/
         
     - name: Deploy to production
       if: github.ref == 'refs/heads/main' && github.event_name == 'push'
