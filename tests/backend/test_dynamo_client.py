@@ -1,6 +1,7 @@
 import pytest
 from moto import mock_dynamodb
 from backend.app.db.dynamo_client import DynamoDBClient
+import requests
 
 @pytest.fixture
 def dynamo_client():
@@ -115,4 +116,34 @@ def test_scan_with_filter(dynamo_client):
         expression_attribute_values={':type': 'A'}
     )
     assert len(filtered_items) == 2
-    assert all(item['type'] == 'A' for item in filtered_items) 
+    assert all(item['type'] == 'A' for item in filtered_items)
+
+@pytest.fixture
+def test_client():
+    from backend.app import app  # Import the Flask app
+    with app.test_client() as client:
+        yield client
+
+def test_generate_predictions(test_client):
+    payload = {'user_id': 'testuser'}
+    response = test_client.post('/api/habit/predictions/generate', json=payload)
+    assert response.status_code == 200
+    print('Prediction generation test passed.')
+
+def test_get_predictions(test_client):
+    params = {'user_id': 'testuser', 'habit_id': 'habit1'}
+    response = test_client.get('/api/habit/predictions/get', query_string=params)
+    assert response.status_code == 200
+    print('Prediction retrieval test passed.')
+
+def test_prediction_feedback(test_client):
+    params = {'user_id': 'testuser', 'habit_id': 'habit1'}
+    response = test_client.get('/api/habit/predictions/feedback', query_string=params)
+    assert response.status_code == 200
+    print('Prediction feedback test passed.')
+
+def test_rl_train(test_client):
+    payload = {'user_id': 'testuser', 'habit_id': 'habit1'}
+    response = test_client.post('/api/habit/predictions/rl_train', json=payload)
+    assert response.status_code == 200
+    print('RL train test passed.')

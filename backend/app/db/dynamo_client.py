@@ -129,6 +129,58 @@ class DynamoDBClient:
             return response
         except ClientError as e:
             raise Exception(f"Failed to delete item from table {table_name}: {str(e)}")
+    
+    def put_embedding(self, user_id: str, habit_id: str, embedding_hex: str, table_name: str = 'HabitEmbeddings') -> Dict[str, Any]:
+        item = {
+            'UserID': user_id,
+            'HabitID': habit_id,
+            'Embedding': embedding_hex,
+        }
+        return self.put_item(table_name, item)
+
+    def get_embedding(self, user_id: str, habit_id: str, table_name: str = 'HabitEmbeddings') -> Optional[str]:
+        key = {'UserID': user_id, 'HabitID': habit_id}
+        item = self.get_item(table_name, key)
+        if item and 'Embedding' in item:
+            return item['Embedding']
+        return None
+
+    def get_habits_for_user(self, user_id: str, table_name: str = 'Habits'):
+        table = self.resource.Table(table_name)
+        response = table.query(KeyConditionExpression='UserID = :uid', ExpressionAttributeValues={':uid': user_id})
+        return response.get('Items', [])
+
+    def get_logs_for_habit(self, user_id: str, habit_id: str, table_name: str = 'HabitLogs'):
+        table = self.resource.Table(table_name)
+        prefix = f"HABIT#{habit_id}#"
+        response = table.query(KeyConditionExpression='UserID = :uid AND begins_with(SK, :prefix)', ExpressionAttributeValues={':uid': user_id, ':prefix': prefix})
+        return response.get('Items', [])
+
+    def get_stats_for_habit(self, user_id: str, habit_id: str, table_name: str = 'HabitStats'):
+        key = {'UserID': user_id, 'HabitID': habit_id}
+        table = self.resource.Table(table_name)
+        response = table.get_item(Key=key)
+        return response.get('Item', {})
+
+    def store_prediction(self, user_id: str, habit_id: str, prediction_id: str, generated_at: str, prediction_type: str, prediction_value, model_id: str, confidence: float, table_name: str = 'HabitPredictions'):
+        sk = f'{habit_id}#{generated_at}#{prediction_id}'
+        item = {
+            'UserID': user_id,
+            'SK': sk,
+            'HabitID': habit_id,
+            'GeneratedAt': generated_at,
+            'PredictionType': prediction_type,
+            'PredictionValue': prediction_value,
+            'ModelID': model_id,
+            'Confidence': confidence
+        }
+        return self.put_item(table_name, item)
+
+    def get_predictions_for_habit(self, user_id: str, habit_id: str, table_name: str = 'HabitPredictions'):
+        table = self.resource.Table(table_name)
+        prefix = f'{habit_id}#'
+        response = table.query(KeyConditionExpression='UserID = :uid AND begins_with(SK, :prefix)', ExpressionAttributeValues={':uid': user_id, ':prefix': prefix})
+        return response.get('Items', [])
 
 # Create a singleton instance
 db_client = DynamoDBClient() 

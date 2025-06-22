@@ -73,3 +73,32 @@ For development credentials, deployment access, or any other inquiries, please c
 - **Tameem Hossain** (Repository Owner)
 - GitHub: [Your GitHub Profile]
 - Email: [Your Professional Email]
+
+## RL/Statistical Prediction API Endpoints
+
+### Generate Predictions for All Habits
+POST `/api/habit/predictions/generate`
+```json
+{
+  "user_id": "testuser"
+}
+```
+Returns: `{ "message": "Predictions generated and stored", "results": [...] }`
+
+### Get Predictions for a Habit
+GET `/api/habit/predictions/get?user_id=testuser&habit_id=habit1`
+Returns: `{ "predictions": [...] }`
+
+### Get Feedback for a Habit Based on Predictions
+GET `/api/habit/predictions/feedback?user_id=testuser&habit_id=habit1`
+Returns: `{ "feedbacks": [...] }`
+
+### Train RL Model for a Habit
+POST `/api/habit/predictions/rl_train`
+```json
+{
+  "user_id": "testuser",
+  "habit_id": "habit1"
+}
+```
+Returns: `{ "message": "RL model trained for habit", "habit_id": "habit1" }`

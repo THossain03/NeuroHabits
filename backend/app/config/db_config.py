@@ -37,6 +37,30 @@ class DatabaseConfig:
             return os.getenv('DYNAMODB_ENDPOINT', 'http://localhost:8000')
         return None
 
+    @property
+    def fernet_key(self) -> str:
+        return os.getenv('FERNET_KEY', '')
+
+    @property
+    def embedding_model(self) -> str:
+        return os.getenv('EMBEDDING_MODEL', 'all-MiniLM-L6-v2')
+
+    @property
+    def openai_api_key(self) -> str:
+        return os.getenv('OPENAI_API_KEY', '')
+
+    @property
+    def rl_alpha(self) -> float:
+        return float(os.getenv('RL_ALPHA', 0.1))
+
+    @property
+    def rl_gamma(self) -> float:
+        return float(os.getenv('RL_GAMMA', 0.9))
+
+    @property
+    def rl_epsilon(self) -> float:
+        return float(os.getenv('RL_EPSILON', 0.1))
+
 @lru_cache()
 def get_db_config() -> DatabaseConfig:
     """Returns a cached instance of DatabaseConfig."""
