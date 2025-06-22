@@ -1,0 +1,168 @@
+erDiagram
+  USERS {
+    string UserID
+    string Email
+    string Status
+    string CreatedAt
+  }
+  USERPROFILES {
+    string UserID
+    string FullName
+    string DisplayName
+    string Timezone
+  }
+  USERSESSIONS {
+    string UserID
+    string SessionID
+    string ExpiresAt
+    string IsActive
+  }
+  USERDEVICES {
+    string UserID
+    string DeviceID
+    string PushToken
+    string LastActiveAt
+  }
+  HABITS {
+    string UserID
+    string HabitID
+    string Name
+    string CategoryID
+    string NextDueAt
+  }
+  HABITLOGS {
+    string UserID
+    string LogID
+    string HabitID
+    string LoggedAt
+    string Status
+  }
+  HABITSTATS {
+    string UserID
+    string HabitID
+    number StreakCurrent
+    string NextReviewAt
+  }
+  USERAIMODELS {
+    string UserID
+    string ModelID
+    string ModelType
+    string Status
+  }
+  HABITPREDICTIONS {
+    string UserID
+    string PredictionID
+    string HabitID
+    string GeneratedAt
+    string PredictionType
+  }
+  AIMODELPERFORMANCE {
+    string UserID
+    string PerfID
+    string ModelID
+    string Date
+    string MetricType
+    number MetricValue
+  }
+  EXTERNALFEEDBACK {
+    string UserID
+    string FeedbackID
+    string Source
+    string FeedbackType
+  }
+  FEEDBACKACTIONS {
+    string UserID
+    string ActionID
+    string FeedbackID
+    string ActionType
+  }
+  HABITADVICELINKS {
+    string UserID
+    string LinkID
+    string HabitID
+    string FeedbackID
+  }
+  USERSETTINGS {
+    string UserID
+  }
+  NOTIFICATIONPREFS {
+    string UserID
+    string NotificationID
+    string Type
+    string NextScheduledAt
+  }
+  HABITTEMPLATES {
+    string TemplateID
+    string Name
+    string CategoryID
+  }
+  CATEGORIES {
+    string CategoryID
+    string Name
+    string ParentCategoryID
+  }
+  HABITTAGS {
+    string UserID
+    string TagID
+    string HabitID
+    string TagValue
+  }
+  USERACTIVITYLOG {
+    string UserID
+    string ActionID
+    string ActionType
+    string ActionTimestamp
+  }
+  ERRORLOGS {
+    string ErrorID
+    string UserID
+    string Service
+    string OccurredAt
+    string Resolved
+  }
+  USERACHIEVEMENTS {
+    string UserID
+    string AchievementID
+    string Type
+    string EarnedAt
+  }
+  APIKEYS {
+    string UserID
+    string APIKeyID
+    string Service
+    string Status
+  }
+  WEBHOOKLOGS {
+    string UserID
+    string WebhookID
+    string Status
+    string SentAt
+    string NextRetryAt
+  }
+
+  USERS ||--o{ USERPROFILES : has
+  USERS ||--o{ USERSESSIONS : has
+  USERS ||--o{ USERDEVICES : has
+  USERS ||--o{ HABITS : owns
+  USERS ||--o{ USERAIMODELS : owns
+  USERS ||--o{ EXTERNALFEEDBACK : receives
+  USERS ||--o{ USERSETTINGS : configures
+  USERS ||--o{ NOTIFICATIONPREFS : sets
+  USERS ||--o{ USERACTIVITYLOG : logs
+  USERS ||--o{ USERACHIEVEMENTS : earns
+  USERS ||--o{ APIKEYS : has
+  USERS ||--o{ WEBHOOKLOGS : logs
+
+  HABITS ||--o{ HABITLOGS : generates
+  HABITS ||--o{ HABITSTATS : aggregates
+  HABITS ||--o{ HABITADVICELINKS : links
+  HABITS ||--o{ HABITTAGS : tagged_with
+  HABITS }o--|| CATEGORIES : belongs_to
+
+  EXTERNALFEEDBACK ||--o{ FEEDBACKACTIONS : responded_by
+  EXTERNALFEEDBACK ||--o{ HABITADVICELINKS : linked_to
+
+  HABITTEMPLATES }o--|| CATEGORIES : categorized_under
+
+  USERAIMODELS }o--o{ AIMODELPERFORMANCE : measures
+  USERAIMODELS ||--o{ HABITPREDICTIONS : uses
