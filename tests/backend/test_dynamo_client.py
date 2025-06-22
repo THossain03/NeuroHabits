@@ -118,28 +118,32 @@ def test_scan_with_filter(dynamo_client):
     assert len(filtered_items) == 2
     assert all(item['type'] == 'A' for item in filtered_items)
 
-BASE_URL = 'http://localhost:8000/api/habit/predictions'
+@pytest.fixture
+def test_client():
+    from backend.app import app  # Import the Flask app
+    with app.test_client() as client:
+        yield client
 
-def test_generate_predictions():
+def test_generate_predictions(test_client):
     payload = {'user_id': 'testuser'}
-    response = requests.post(f'{BASE_URL}/generate', json=payload)
+    response = test_client.post('/api/habit/predictions/generate', json=payload)
     assert response.status_code == 200
     print('Prediction generation test passed.')
 
-def test_get_predictions():
+def test_get_predictions(test_client):
     params = {'user_id': 'testuser', 'habit_id': 'habit1'}
-    response = requests.get(f'{BASE_URL}/get', params=params)
+    response = test_client.get('/api/habit/predictions/get', query_string=params)
     assert response.status_code == 200
     print('Prediction retrieval test passed.')
 
-def test_prediction_feedback():
+def test_prediction_feedback(test_client):
     params = {'user_id': 'testuser', 'habit_id': 'habit1'}
-    response = requests.get(f'{BASE_URL}/feedback', params=params)
+    response = test_client.get('/api/habit/predictions/feedback', query_string=params)
     assert response.status_code == 200
     print('Prediction feedback test passed.')
 
-def test_rl_train():
+def test_rl_train(test_client):
     payload = {'user_id': 'testuser', 'habit_id': 'habit1'}
-    response = requests.post(f'{BASE_URL}/rl_train', json=payload)
+    response = test_client.post('/api/habit/predictions/rl_train', json=payload)
     assert response.status_code == 200
-    print('RL train test passed.') 
+    print('RL train test passed.')
