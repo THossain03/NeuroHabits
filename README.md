@@ -13,7 +13,7 @@ Let's start building habits that stick with NeuroHabits! 🚀
 ## Development Setup
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.10+
 - Node.js 16+
 - AWS Account (for production deployment)
 - Contact repository owner (Tameem Hossain) for development credentials
