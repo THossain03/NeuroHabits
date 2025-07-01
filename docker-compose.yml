@@ -10,3 +10,7 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
+  go-ml-detect:
+    build: ./go-ml-detect
+    ports:
+      - "9000:9000"
