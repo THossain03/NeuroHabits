@@ -61,6 +61,10 @@ class DatabaseConfig:
     def rl_epsilon(self) -> float:
         return float(os.getenv('RL_EPSILON', 0.1))
 
+    @property
+    def go_ml_service_url(self) -> str:
+        return os.getenv('GO_ML_SERVICE_URL', 'http://localhost:9000')
+
 @lru_cache()
 def get_db_config() -> DatabaseConfig:
     """Returns a cached instance of DatabaseConfig."""

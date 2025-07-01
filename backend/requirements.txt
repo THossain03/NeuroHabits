@@ -59,5 +59,4 @@ numpy==1.26.4
 openai==1.23.2
 sentence-transformers==2.6.1
 cryptography==42.0.5
-pickle5==0.0.12
 requests==2.31.0

@@ -9,6 +9,7 @@ import openai
 import uuid
 from datetime import datetime
 from .config.db_config import get_db_config
+from .ml_concurrent import concurrent_predict_habits
 
 # Load environment variables
 load_dotenv()
@@ -162,31 +163,25 @@ def generate_habit_predictions():
     data = request.json
     user_id = data['user_id']
     model_id = data.get('model_id', 'default-rl')
-    predictor = HabitPredictor()
     habits = db_client.get_habits_for_user(user_id)
-    results = []
-    for habit in habits:
-        habit_id = habit['HabitID']
-        logs = db_client.get_logs_for_habit(user_id, habit_id)
-        if not logs:
-            continue
-        prediction_result = predictor.train_and_predict(logs)
-        generated_at = datetime.utcnow().isoformat() + 'Z'
-        prediction_id = str(uuid.uuid4())
-        db_client.store_prediction(
-            user_id=user_id,
-            habit_id=habit_id,
-            prediction_id=prediction_id,
-            generated_at=generated_at,
-            prediction_type='rl_time_prediction',
-            prediction_value=prediction_result,
-            model_id=model_id,
-            confidence=1.0
-        )
-        results.append({
-            'habit_id': habit_id,
-            'prediction': prediction_result
-        })
+    # Use concurrent prediction
+    results = concurrent_predict_habits(user_id, habits)
+    for result in results:
+        if result['prediction'] is not None:
+            habit_id = result['habit_id']
+            prediction_result = result['prediction']
+            generated_at = datetime.utcnow().isoformat() + 'Z'
+            prediction_id = str(uuid.uuid4())
+            db_client.store_prediction(
+                user_id=user_id,
+                habit_id=habit_id,
+                prediction_id=prediction_id,
+                generated_at=generated_at,
+                prediction_type='rl_time_prediction',
+                prediction_value=prediction_result,
+                model_id=model_id,
+                confidence=1.0
+            )
     return jsonify({'message': 'Predictions generated and stored', 'results': results}), 200
 
 @app.route('/api/habit/predictions/get', methods=['GET'])
