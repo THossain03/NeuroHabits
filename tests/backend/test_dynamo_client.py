@@ -1,8 +1,6 @@
 import pytest
 from moto import mock_dynamodb
 from backend.app.db.dynamo_client import DynamoDBClient
-import requests
-
 @pytest.fixture
 def dynamo_client():
     with mock_dynamodb():
